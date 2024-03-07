@@ -1,26 +1,24 @@
 // Create web server
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const path = require('path');
-const fs = require('fs');
-const { v4: uuidv4 } = require('uuid');
+// Create a web server that listens to incoming requests and serves a static HTML file.
+// The server should listen to port 8080.
+// The server should respond with the content of the file index.html for all requests.
+// If the file is not found, the server should respond with a 404 status code.
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+const http = require("http");
+const fs = require("fs");
+const path = require("path");
 
-app.use(express.static('public'));
-
-app.get('/api/comments', (req, res) => {
-  const data = fs.readFileSync('comments.json');
-  const comments = JSON.parse(data);
-  res.json(comments);
+const server = http.createServer((req, res) => {
+  const filePath = path.join(__dirname, "index.html");
+  fs.readFile(filePath, (err, content) => {
+    if (err) {
+      res.writeHead(404);
+      res.end("Not found");
+    } else {
+      res.writeHead(200, { "Content-Type": "text/html" });
+      res.end(content);
+    }
+  });
 });
 
-app.post('/api/comments', (req, res) => {
-  const data = fs.readFileSync('comments.json');
-  const comments = JSON.parse(data);
-  const newComment = {
-    id: uuidv4(),
-    text: req.body.text
-  }});
+server.listen(8080);
